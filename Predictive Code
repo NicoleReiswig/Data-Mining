@@ -1,0 +1,2189 @@
+#Check the working directory 
+
+getwd() 
+
+  
+
+#Data profiling 
+
+str("~/MSDA/churn_clean")  
+
+  
+
+#Dimensions of data 
+
+dim(churn_clean) 
+
+#10000 50 
+
+  
+
+# load packages 
+
+#view missng data 
+
+library(visdat) 
+
+#for reading and manipulation of data 
+
+library(data.table)  
+
+# used for data manipulation and joining 
+
+library(dplyr)  
+
+# used for regression 
+
+library(glmnet) 
+
+# used for plotting  
+
+library(ggplot2)  
+
+# used for skewness 
+
+library(e1071)  
+
+# used for combining multiple plots  
+
+library(cowplot)  
+
+#collection of r packages for data science  
+
+library(tidyverse) 
+
+#Perform Naive Bayes Classification 
+
+library(naivebayes) 
+
+#Tools for training regression and classification models 
+
+library(caret) 
+
+#For loading and unloading packages 
+
+library(pacman) 
+
+#For pipes 
+
+library(magrittr) 
+
+#For lasso regression 
+
+library(lars) 
+
+  
+
+#View data 
+
+glimpse(churn_clean) 
+
+str(churn_clean) 
+
+  
+
+#Detect duplicates 
+
+duplicated("~/MSDA/churn_clean") 
+
+#No duplicates 
+
+  
+
+#Detect missing values 
+
+vis_miss(churn_clean) 
+
+colSums(is.na(churn_clean)) 
+
+#No missing values 
+
+  
+
+#Rename column names item 1- 8 [in-text citation: (Zach, 2022)]   
+
+colnames(churn_clean)[colnames(churn_clean) == 'Item1'] <- 'Timely_Response'   
+
+colnames(churn_clean)[colnames(churn_clean) == 'Item2'] <- 'Timely_Fixes'   
+
+colnames(churn_clean)[colnames(churn_clean) == 'Item3'] <- 'Timely_Replacements'   
+
+colnames(churn_clean)[colnames(churn_clean) == 'Item4'] <- 'Reliability'   
+
+colnames(churn_clean)[colnames(churn_clean) == 'Item5'] <- 'Options'   
+
+colnames(churn_clean)[colnames(churn_clean) == 'Item6'] <- 'Respectful_Response'   
+
+colnames(churn_clean)[colnames(churn_clean) == 'Item7'] <- 'Courteous_Exchange'   
+
+colnames(churn_clean)[colnames(churn_clean) == 'Item8'] <- 'Active_Listening'   
+
+  
+
+#Verify columns renamed successfully  
+
+glimpse(churn_clean) 
+
+  
+
+#Visualizations  
+
+#Boxplot of each variable - detect outliers - Univariate Graphs of each variable  
+
+boxplot(churn_clean$CaseOrder, main = "Case Order")   
+
+boxplot(churn_clean$Zip, main = "Zip Code")   
+
+boxplot(churn_clean$Lat, main = "Lat")   
+
+boxplot(churn_clean$Lng, main = "Lng")   
+
+boxplot(churn_clean$Population, main = "Population")   
+
+boxplot(churn_clean$Children, main = "Children")     
+
+boxplot(churn_clean$Age, main = "Age")   
+
+boxplot(churn_clean$Income, main = "Income")   
+
+boxplot(churn_clean$Outage_sec_perweek, main = "Outage Sec Per Week")   
+
+boxplot(churn_clean$Email, main = "Email")   
+
+boxplot(churn_clean$Contacts, main = "Contacts")   
+
+boxplot(churn_clean$Yearly_equip_failure, main = "Yearly Equip Failures")  
+
+boxplot(churn_clean$Tenure, main = "Tenure")   
+
+boxplot(churn_clean$MonthlyCharge, main = "Monthly Charge")   
+
+boxplot(churn_clean$Bandwidth_GB_Year, main = "Bandwidth GB Year")   
+
+  
+
+#Count and range of variables with outliers  
+
+Children <- churn_clean[which(churn_clean$Children > 7), ]   
+
+str(Children)   
+
+  
+
+Income <- churn_clean[which(churn_clean$Income > 100000), ]   
+
+str(Income)  
+
+  
+
+Outage <- churn_clean[which(churn_clean$Outage_sec_perweek > 20), ]   
+
+str(Outage)   
+
+Outage2 <- churn_clean[which(churn_clean$Outage_sec_perweek < 0), ]   
+
+str(Outage2)   
+
+  
+
+Email <- churn_clean[which(churn_clean$Email > 20), ]   
+
+str(Email)   
+
+Email2 <- churn_clean[which(churn_clean$Email < 4), ]   
+
+str(Email2)   
+
+  
+
+Contacts <- churn_clean[which(churn_clean$Contacts > 5), ]   
+
+str(Contacts)   
+
+  
+
+Equipment <- churn_clean[which(churn_clean$Yearly_equip_failure > 2), ]   
+
+str(Equipment)   
+
+  
+
+Monthly <- churn_clean[which(churn_clean$MonthlyCharge > 300), ]   
+
+str(Monthly)   
+
+  
+
+Timely_Response <- churn_clean[which(churn_clean$Timely_Response > 5), ]   
+
+str(Timely_Response)   
+
+Timely_Response1 <- churn_clean[which(churn_clean$Timely_Response < 2), ]   
+
+str(Timely_Response1)   
+
+  
+
+Timely_Fixes <- churn_clean[which(churn_clean$Timely_Fixes > 5), ]   
+
+str(Timely_Fixes)   
+
+Timely_Fixes2 <- churn_clean[which(churn_clean$Timely_Fixes < 2), ]   
+
+str(Timely_Fixes2)   
+
+  
+
+Timely_Replacements <- churn_clean[which(churn_clean$Timely_Replacements > 5), ]   
+
+str(Timely_Replacements)   
+
+Timely_Replacements3 <- churn_clean[which(churn_clean$Timely_Replacements < 2), ]   
+
+str(Timely_Replacements3)   
+
+  
+
+Reliability <- churn_clean[which(churn_clean$Reliability > 5), ]   
+
+str(Reliability)   
+
+Reliability4 <- churn_clean[which(churn_clean$Reliability < 2), ]   
+
+str(Reliability4)   
+
+  
+
+Options <- churn_clean[which(churn_clean$Options > 5), ]   
+
+str(Options)   
+
+Options5 <- churn_clean[which(churn_clean$Options < 2), ]   
+
+str(Options5)   
+
+  
+
+Respectful_Response <- churn_clean[which(churn_clean$Respectful_Response > 5), ]   
+
+str(Respectful_Response)   
+
+Respectful_Response6 <- churn_clean[which(churn_clean$Respectful_Response < 2), ]   
+
+str(Respectful_Response6)   
+
+  
+
+Courteous_Exchange <- churn_clean[which(churn_clean$Courteous_Exchange > 5), ]   
+
+str(Courteous_Exchange)   
+
+Courteous_Exchange7 <- churn_clean[which(churn_clean$Courteous_Exchange < 2), ]   
+
+str(Courteous_Exchange7)   
+
+  
+
+Active_Listening <- churn_clean[which(churn_clean$Active_Listening > 5), ]   
+
+str(Active_Listening)   
+
+Active_Listening8 <- churn_clean[which(churn_clean$Active_Listening < 2), ]   
+
+str(Active_Listening8)   
+
+  
+
+#Summary statistics 
+
+summary(churn_clean) 
+
+  
+
+#Histograms of variables with outliers- Univariate graphs  
+
+hist(churn_clean$Population, col = 'turquoise', main = "Population")    
+
+hist(churn_clean$Children, col = 'turquoise', main = "Children")    
+
+hist(churn_clean$Income, col = 'turquoise', main = "Income")   
+
+hist(churn_clean$Outage_sec_perweek, col = 'turquoise', main = "Outage Sec Perweek")  
+
+hist(churn_clean$Email, col = 'turquoise', main = "Email")  
+
+hist(churn_clean$Contacts, col = 'turquoise', main = "Contacts")  
+
+hist(churn_clean$Yearly_equip_failure, col = 'turquoise', main = "Yearly Equip Failure")  
+
+hist(churn_clean$Timely_Response, col = 'turquoise', main = "Timely Response")   
+
+hist(churn_clean$Timely_Fixes, col = 'turquoise', main = "Timely Fixes")   
+
+hist(churn_clean$Timely_Replacements, col = 'turquoise', main = "Timely Replacements")    
+
+hist(churn_clean$Reliability, col = 'turquoise', main = "Reliability")   
+
+hist(churn_clean$Options, col = 'turquoise', main = "Options")   
+
+hist(churn_clean$Respectful_Response, col = 'turquoise', main = "Respectful Response")   
+
+hist(churn_clean$Courteous_Exchange, col = 'turquoise', main = "Courteous Exchange")   
+
+hist(churn_clean$Active_Listening, col = 'turquoise', main = "Active Listening")   
+
+  
+
+#Explore data variables- univariate graphs [in-text citation: (R programming 101, n.d.)]   
+
+barplot(sort(table(churn_clean$Area)), col = 'blue', main = "Area")   
+
+barplot(sort(table(churn_clean$TimeZone)), col = 'blue', main = "Timezone")   
+
+barplot(sort(table(churn_clean$Children)), col = 'blue', main = "Number of Children")   
+
+barplot(sort(table(churn_clean$Age)), col = 'blue', main = "Age")   
+
+barplot(sort(table(churn_clean$Income)), col = 'blue', main = "Income")   
+
+barplot(sort(table(churn_clean$Marital)), col = 'blue', main = "Marital")   
+
+barplot(sort(table(churn_clean$Gender)), col = 'blue', main = "Gender")   
+
+barplot(sort(table(churn_clean$Churn)), col = 'blue', main = "Churn")   
+
+barplot(sort(table(churn_clean$Outage_sec_perweek)), col = 'blue', main = "Outage Sec Per Week")   
+
+barplot(sort(table(churn_clean$Email)), col = 'blue', main = "Email")   
+
+barplot(sort(table(churn_clean$Contacts)), col = 'blue', main = "Contacts")  
+
+barplot(sort(table(churn_clean$Yearly_equip_failure)), col = 'blue', main = "Yearly Equipment Failure")   
+
+barplot(sort(table(churn_clean$Techie)), col = 'blue', main = "Techie")   
+
+barplot(sort(table(churn_clean$Contract)), col = 'blue', main = "Contracts")  
+
+barplot(sort(table(churn_clean$Port_modem)), col = 'blue', main = "Port Modem")   
+
+barplot(sort(table(churn_clean$Tablet)), col = 'blue', main = "Tablet")   
+
+barplot(sort(table(churn_clean$InternetService)), col = 'blue', main = "Internet Service")  
+
+barplot(sort(table(churn_clean$Phone)), col = 'blue', main = "Phone")   
+
+barplot(sort(table(churn_clean$Multiple)), col = 'blue', main = "Multiple")   
+
+barplot(sort(table(churn_clean$OnlineSecurity)), col = 'blue', main = "Online Security")   
+
+barplot(sort(table(churn_clean$OnlineBackup)), col = 'blue', main = "Online Backup")   
+
+barplot(sort(table(churn_clean$DeviceProtection)), col = 'blue', main = "Device Protection")  
+
+barplot(sort(table(churn_clean$TechSupport)), col = 'blue', main = "Tech Support")   
+
+barplot(sort(table(churn_clean$StreamingTV)), col = 'blue', main = "Streaming TV")   
+
+barplot(sort(table(churn_clean$StreamingMovies)), col = 'blue', main = "Streaming Movies")   
+
+barplot(sort(table(churn_clean$PaperlessBilling)), col = 'blue', main = "Paperless Billing")  
+
+barplot(sort(table(churn_clean$PaymentMethod)), col = 'blue', main = "Payment Method")   
+
+barplot(sort(table(churn_clean$Tenure)), col = 'blue', main = "Tenure")   
+
+barplot(sort(table(churn_clean$MonthlyCharge)), col = 'blue', main = "Monthly Charge")   
+
+barplot(sort(table(churn_clean$Bandwidth_GB_Year)), col = 'blue', main = "Bandwidth GB Year")   
+
+barplot(sort(table(churn_clean$Timely_Response)), main = "Timely Response")   
+
+barplot(sort(table(churn_clean$Timely_Fixes)), col = 'blue', main = "Timely Fixes")   
+
+barplot(sort(table(churn_clean$Timely_Replacements)), col = 'blue', main = "Timely Replacements")   
+
+barplot(sort(table(churn_clean$Reliability)), col = 'blue', main = "Reliability")  
+
+barplot(sort(table(churn_clean$Options)), col = 'blue', main = "Options")   
+
+barplot(sort(table(churn_clean$Respectful_Response)), col = 'blue', main = "Respecftful Response")   
+
+barplot(sort(table(churn_clean$Courteous_Exchange)), col = 'blue', main = "Courteous Exchange")   
+
+barplot(sort(table(churn_clean$Active_Listening)), col = 'blue', main = "Active Listening")   
+
+  
+
+  
+
+#BiVariate Graph of each variable   
+
+library(ggplot2)   
+
+  
+
+#Stacked bar chart Tenure, Area 
+
+ggplot(churn_clean, aes(x = Tenure, y = Area, fill = Area)) + 
+
+  geom_col(position = "stack") 
+
+#Scatter plot 
+
+ggplot(churn_clean, aes(x = Tenure, y = Area, fill = Area)) + 
+
+  geom_point(color = "steelblue") + 
+
+  geom_smooth(method = "lm", 
+
+  formula = y ~ poly(x,2), 
+
+  color = "indianred2") 
+
+#Line plot 
+
+ggplot(churn_clean, aes(x = Tenure, y = Area)) + 
+
+  geom_line(size = 2, color = "lightgrey") + 
+
+  geom_point(size = .5, color = "steelblue") + 
+
+  labs(y = "Area", x = "Length of Tenure", title = "Length of Tenure by Area",  
+
+  subtitle = "Telecom Churn Data", caption = "Western Governors University") 
+
+#Density plot 
+
+ggplot(churn_clean, aes(x = Tenure, fill = Area)) + 
+
+  geom_density(alpha = 0.4) + 
+
+  labs(title = "Length of Tenure by Area") 
+
+#Density Ridge 
+
+library(ggridges) 
+
+ggplot(churn_clean, aes(x = Tenure, y = Area, fill = Area)) + 
+
+  geom_density_ridges() + 
+
+  theme_ridges() + 
+
+  labs("Length of Tenure by Area") + 
+
+  theme(legend.position = "none") 
+
+  
+
+  
+
+#Stacked bar chart Tenure, Contract 
+
+ggplot(churn_clean, aes(x = Tenure, y = Contract, fill = Contract)) + 
+
+  geom_col(position = "stack") 
+
+#Scatter plot 
+
+ggplot(churn_clean, aes(x = Tenure, y = Contract, fill = Contract)) + 
+
+  geom_point(color = "steelblue") + 
+
+  geom_smooth(method = "lm", 
+
+              formula = y ~ poly(x,2), 
+
+              color = "indianred2") 
+
+#Line plot 
+
+ggplot(churn_clean, aes(x = Tenure, y = Contract)) + 
+
+  geom_line(size = 2, color = "lightgrey") + 
+
+  geom_point(size = .5, color = "steelblue") + 
+
+  labs(y = "Contract", x = "Tenure", title = "Length of Tenure by Contract",  
+
+       subtitle = "Telecom Churn Data", caption = "Western Governors University") 
+
+#Density plot 
+
+ggplot(churn_clean, aes(x = Tenure, fill = Contract)) + 
+
+  geom_density(alpha = 0.4) + 
+
+  labs(title = "Length of Tenure by Contract") 
+
+#Density Ridge 
+
+ggplot(churn_clean, aes(x = Tenure, y = Contract, fill = Contract)) + 
+
+  geom_density_ridges() + 
+
+  theme_ridges() + 
+
+  labs("Length of Tenure by Contract") + 
+
+  theme(legend.position = "none") 
+
+  
+
+  
+
+  
+
+#Stacked bar chart Tenure, Gender 
+
+ggplot(churn_clean, aes(x = Tenure, y = Gender, fill = Gender)) + 
+
+  geom_col(position = "stack") 
+
+#Scatter plot 
+
+ggplot(churn_clean, aes(x = Tenure, y = Gender, fill = Gender)) + 
+
+  geom_point(color = "steelblue") + 
+
+  geom_smooth(method = "lm", 
+
+              formula = y ~ poly(x,2), 
+
+              color = "indianred2") 
+
+#Line plot 
+
+ggplot(churn_clean, aes(x = Tenure, y = Gender)) + 
+
+  geom_line(size = 2, color = "lightgrey") + 
+
+  geom_point(size = .5, color = "steelblue") + 
+
+  labs(y = "Gender", x = "Length of Tenure", title = "Length of Tenure by Gender",  
+
+       subtitle = "Telecom Churn Data", caption = "Western Governors University") 
+
+#Density plot 
+
+ggplot(churn_clean, aes(x = Tenure, fill = Gender)) + 
+
+  geom_density(alpha = 0.4) + 
+
+  labs(title = "Length of Tenure by Gender") 
+
+#Density Ridge 
+
+ggplot(churn_clean, aes(x = Tenure, y = Gender, fill = Gender)) + 
+
+  geom_density_ridges() + 
+
+  theme_ridges() + 
+
+  labs("Length of Tenure by Gender") + 
+
+  theme(legend.position = "none")     
+
+  
+
+#Stacked bar chart Tenure, Marital 
+
+ggplot(churn_clean, aes(x = Tenure, y = Marital, fill = Marital)) + 
+
+  geom_col(position = "stack") 
+
+#Scatter plot 
+
+ggplot(churn_clean, aes(x = Tenure, y = Marital, fill = Marital)) + 
+
+  geom_point(color = "steelblue") + 
+
+  geom_smooth(method = "lm", 
+
+              formula = y ~ poly(x,2), 
+
+              color = "indianred2") 
+
+#Line plot 
+
+ggplot(churn_clean, aes(x = Tenure, y = Marital)) + 
+
+  geom_line(size = 2, color = "lightgrey") + 
+
+  geom_point(size = .5, color = "steelblue") + 
+
+  labs(y = "Marital", x = "Length of Tenure", title = "Length of Tenure by Marital Status",  
+
+       subtitle = "Telecom Churn Data", caption = "Western Governors University") 
+
+#Density plot 
+
+ggplot(churn_clean, aes(x = Tenure, fill = Marital)) + 
+
+  geom_density(alpha = 0.4) + 
+
+  labs(title = "Length of Tenure by Marital Status") 
+
+#Density Ridge 
+
+ggplot(churn_clean, aes(x = Tenure, y = Marital, fill = Marital)) + 
+
+  geom_density_ridges() + 
+
+  theme_ridges() + 
+
+  labs("Length of Tenure by Marital Status") + 
+
+  theme(legend.position = "none")  
+
+  
+
+#Stacked bar chart Tenure, Internet Service 
+
+ggplot(churn_clean, aes(x = Tenure, y = InternetService, fill = InternetService)) + 
+
+  geom_col(position = "stack") 
+
+#Scatter plot 
+
+ggplot(churn_clean, aes(x = Tenure, y = InternetService, fill = InternetService)) + 
+
+  geom_point(color = "steelblue") + 
+
+  geom_smooth(method = "lm", 
+
+              formula = y ~ poly(x,2), 
+
+              color = "indianred2") 
+
+#Line plot 
+
+ggplot(churn_clean, aes(x = Tenure, y = InternetService)) + 
+
+  geom_line(size = 2, color = "lightgrey") + 
+
+  geom_point(size = .5, color = "steelblue") + 
+
+  labs(y = "Internet Service", x = "Length of Tenure", title = "Length of Tenure by Internet Service Type",  
+
+       subtitle = "Telecom Churn Data", caption = "Western Governors University") 
+
+#Density plot 
+
+ggplot(churn_clean, aes(x = Tenure, fill = InternetService)) + 
+
+  geom_density(alpha = 0.4) + 
+
+  labs(title = "Length of Tenure by Internet Service Type") 
+
+#Density Ridge 
+
+ggplot(churn_clean, aes(x = Tenure, y = InternetService, fill = InternetService)) + 
+
+  geom_density_ridges() + 
+
+  theme_ridges() + 
+
+  labs("Length of Tenure by Internet Service Type") + 
+
+  theme(legend.position = "none")  
+
+  
+
+#Stacked bar chart Tenure, Payment Method 
+
+ggplot(churn_clean, aes(x = Tenure, y = PaymentMethod, fill = PaymentMethod)) + 
+
+  geom_col(position = "stack") 
+
+#Scatter plot 
+
+ggplot(churn_clean, aes(x = Tenure, y = PaymentMethod, fill = PaymentMethod)) + 
+
+  geom_point(color = "steelblue") + 
+
+  geom_smooth(method = "lm", 
+
+              formula = y ~ poly(x,2), 
+
+              color = "indianred2") 
+
+#Line plot 
+
+ggplot(churn_clean, aes(x = Tenure, y = PaymentMethod)) + 
+
+  geom_line(size = 2, color = "lightgrey") + 
+
+  geom_point(size = .5, color = "steelblue") + 
+
+  labs(y = "Payment Method", x = "Length of Tenure", title = "Length of Tenure by Payment Method",  
+
+       subtitle = "Telecom Churn Data", caption = "Western Governors University") 
+
+#Density plot 
+
+ggplot(churn_clean, aes(x = Tenure, fill = PaymentMethod)) + 
+
+  geom_density(alpha = 0.4) + 
+
+  labs(title = "Length of Tenure by Payment Method") 
+
+#Density Ridge 
+
+ggplot(churn_clean, aes(x = Tenure, y = PaymentMethod, fill = PaymentMethod)) + 
+
+  geom_density_ridges() + 
+
+  theme_ridges() + 
+
+  labs("Length of Tenure by Payment Method") + 
+
+  theme(legend.position = "none")    
+
+  
+
+#Stacked bar chart Tenure, Churn 
+
+ggplot(churn_clean, aes(x = Tenure, y = Churn, fill = Churn)) + 
+
+  geom_col(position = "stack") 
+
+#Scatter plot 
+
+ggplot(churn_clean, aes(x = Tenure, y = Churn, fill = Churn)) + 
+
+  geom_point(color = "steelblue") + 
+
+  geom_smooth(method = "lm", 
+
+              formula = y ~ poly(x,2), 
+
+              color = "indianred2") 
+
+#Line plot 
+
+ggplot(churn_clean, aes(x = Tenure, y = Churn)) + 
+
+  geom_line(size = 2, color = "lightgrey") + 
+
+  geom_point(size = .5, color = "steelblue") + 
+
+  labs(y = "Churn", x = "Length of Tenure", title = "Length of Tenure by Churn",  
+
+       subtitle = "Telecom Churn Data", caption = "Western Governors University") 
+
+#Density plot 
+
+ggplot(churn_clean, aes(x = Tenure, fill = Churn)) + 
+
+  geom_density(alpha = 0.4) + 
+
+  labs(title = "Length of Tenure by Churn") 
+
+#Density Ridge 
+
+ggplot(churn_clean, aes(x = Tenure, y = Churn, fill = Churn)) + 
+
+  geom_density_ridges() + 
+
+  theme_ridges() + 
+
+  labs("Length of Tenure by Churn") + 
+
+  theme(legend.position = "none")  
+
+  
+
+#Stacked bar chart Tenure, Techie 
+
+ggplot(churn_clean, aes(x = Tenure, y = Techie, fill = Techie)) + 
+
+  geom_col(position = "stack") 
+
+#Scatter plot 
+
+ggplot(churn_clean, aes(x = Tenure, y = Techie, fill = Techie)) + 
+
+  geom_point(color = "steelblue") + 
+
+  geom_smooth(method = "lm", 
+
+              formula = y ~ poly(x,2), 
+
+              color = "indianred2") 
+
+#Line plot 
+
+ggplot(churn_clean, aes(x = Tenure, y = Techie)) + 
+
+  geom_line(size = 2, color = "lightgrey") + 
+
+  geom_point(size = .5, color = "steelblue") + 
+
+  labs(y = "Techie", x = "Length of Tenure", title = "Length of Tenure by Techie",  
+
+       subtitle = "Telecom Churn Data", caption = "Western Governors University") 
+
+#Density plot 
+
+ggplot(churn_clean, aes(x = Tenure, fill = Techie)) + 
+
+  geom_density(alpha = 0.4) + 
+
+  labs(title = "Length of Tenure by Techie") 
+
+#Density Ridge 
+
+ggplot(churn_clean, aes(x = Tenure, y = Techie, fill = Techie)) + 
+
+  geom_density_ridges() + 
+
+  theme_ridges() + 
+
+  labs("Length of Tenure by Techie") + 
+
+  theme(legend.position = "none")   
+
+  
+
+#Stacked bar chart Tenure, Port Modem 
+
+ggplot(churn_clean, aes(x = Tenure, y = Port_modem, fill = Port_modem)) + 
+
+  geom_col(position = "stack") 
+
+#Scatter plot 
+
+ggplot(churn_clean, aes(x = Tenure, y = Port_modem, fill = Port_modem)) + 
+
+  geom_point(color = "steelblue") + 
+
+  geom_smooth(method = "lm", 
+
+              formula = y ~ poly(x,2), 
+
+              color = "indianred2") 
+
+#Line plot 
+
+ggplot(churn_clean, aes(x = Tenure, y = Port_modem)) + 
+
+  geom_line(size = 2, color = "lightgrey") + 
+
+  geom_point(size = .5, color = "steelblue") + 
+
+  labs(y = "Port Modem", x = "Length of Tenure", title = "Length of Tenure by Port Modem",  
+
+       subtitle = "Telecom Churn Data", caption = "Western Governors University") 
+
+#Density plot 
+
+ggplot(churn_clean, aes(x = Tenure, fill = Port_modem)) + 
+
+  geom_density(alpha = 0.4) + 
+
+  labs(title = "Length of Tenure by Port Modem") 
+
+#Density Ridge 
+
+ggplot(churn_clean, aes(x = Tenure, y = Port_modem, fill = Port_modem)) + 
+
+  geom_density_ridges() + 
+
+  theme_ridges() + 
+
+  labs("Length of Tenure by Port Modem") + 
+
+  theme(legend.position = "none")   
+
+  
+
+#Stacked bar chart Tenure, Tablet 
+
+ggplot(churn_clean, aes(x = Tenure, y = Tablet, fill = Tablet)) + 
+
+  geom_col(position = "stack") 
+
+#Scatter plot 
+
+ggplot(churn_clean, aes(x = Tenure, y = Tablet, fill = Tablet)) + 
+
+  geom_point(color = "steelblue") + 
+
+  geom_smooth(method = "lm", 
+
+              formula = y ~ poly(x,2), 
+
+              color = "indianred2") 
+
+#Line plot 
+
+ggplot(churn_clean, aes(x = Tenure, y = Tablet)) + 
+
+  geom_line(size = 2, color = "lightgrey") + 
+
+  geom_point(size = .5, color = "steelblue") + 
+
+  labs(y = "Tablet", x = "Length of Tenure", title = "Length of Tenure by Tablet",  
+
+       subtitle = "Telecom Churn Data", caption = "Western Governors University") 
+
+#Density plot 
+
+ggplot(churn_clean, aes(x = Tenure, fill = Tablet)) + 
+
+  geom_density(alpha = 0.4) + 
+
+  labs(title = "Length of Tenure by Tablet") 
+
+#Density Ridge 
+
+ggplot(churn_clean, aes(x = Tenure, y = Tablet, fill = Tablet)) + 
+
+  geom_density_ridges() + 
+
+  theme_ridges() + 
+
+  labs("Length of Tenure by Tablet") + 
+
+  theme(legend.position = "none")   
+
+  
+
+#Stacked bar chart Tenure, Phone 
+
+ggplot(churn_clean, aes(x = Tenure, y = Phone, fill = Phone)) + 
+
+  geom_col(position = "stack") 
+
+#Scatter plot 
+
+ggplot(churn_clean, aes(x = Tenure, y = Phone, fill = Phone)) + 
+
+  geom_point(color = "steelblue") + 
+
+  geom_smooth(method = "lm", 
+
+              formula = y ~ poly(x,2), 
+
+              color = "indianred2") 
+
+#Line plot 
+
+ggplot(churn_clean, aes(x = Tenure, y = Phone)) + 
+
+  geom_line(size = 2, color = "lightgrey") + 
+
+  geom_point(size = .5, color = "steelblue") + 
+
+  labs(y = "Phone", x = "Length of Tenure", title = "Length of Tenure by Phone",  
+
+       subtitle = "Telecom Churn Data", caption = "Western Governors University") 
+
+#Density plot 
+
+ggplot(churn_clean, aes(x = Tenure, fill = Phone)) + 
+
+  geom_density(alpha = 0.4) + 
+
+  labs(title = "Length of Tenure by Phone") 
+
+#Density Ridge 
+
+ggplot(churn_clean, aes(x = Tenure, y = Phone, fill = Phone)) + 
+
+  geom_density_ridges() + 
+
+  theme_ridges() + 
+
+  labs("Length of Tenure by Phone") + 
+
+  theme(legend.position = "none")    
+
+  
+
+#Stacked bar chart Tenure, Multiple 
+
+ggplot(churn_clean, aes(x = Tenure, y = Multiple, fill = Multiple)) + 
+
+  geom_col(position = "stack") 
+
+#Scatter plot 
+
+ggplot(churn_clean, aes(x = Tenure, y = Multiple, fill = Multiple)) + 
+
+  geom_point(color = "steelblue") + 
+
+  geom_smooth(method = "lm", 
+
+              formula = y ~ poly(x,2), 
+
+              color = "indianred2") 
+
+#Line plot 
+
+ggplot(churn_clean, aes(x = Tenure, y = Multiple)) + 
+
+  geom_line(size = 2, color = "lightgrey") + 
+
+  geom_point(size = .5, color = "steelblue") + 
+
+  labs(y = "Multiple", x = "Length of Tenure", title = "Length of Tenure by Multiple",  
+
+       subtitle = "Telecom Churn Data", caption = "Western Governors University") 
+
+#Density plot 
+
+ggplot(churn_clean, aes(x = Tenure, fill = Multiple)) + 
+
+  geom_density(alpha = 0.4) + 
+
+  labs(title = "Length of Tenure by Multiple") 
+
+#Density Ridge 
+
+ggplot(churn_clean, aes(x = Tenure, y = Multiple, fill = Multiple)) + 
+
+  geom_density_ridges() + 
+
+  theme_ridges() + 
+
+  labs("Length of Tenure by Multiple") + 
+
+  theme(legend.position = "none")    
+
+  
+
+#Stacked bar chart Tenure, OnlineSecurity 
+
+ggplot(churn_clean, aes(x = Tenure, y = OnlineSecurity, fill = OnlineSecurity)) + 
+
+  geom_col(position = "stack") 
+
+#Scatter plot 
+
+ggplot(churn_clean, aes(x = Tenure, y = OnlineSecurity, fill = OnlineSecurity)) + 
+
+  geom_point(color = "steelblue") + 
+
+  geom_smooth(method = "lm", 
+
+              formula = y ~ poly(x,2), 
+
+              color = "indianred2") 
+
+#Line plot 
+
+ggplot(churn_clean, aes(x = Tenure, y = OnlineSecurity)) + 
+
+  geom_line(size = 2, color = "lightgrey") + 
+
+  geom_point(size = .5, color = "steelblue") + 
+
+  labs(y = "OnlineSecurity", x = "Length of Tenure", title = "Length of Tenure by OnlineSecurity",  
+
+       subtitle = "Telecom Churn Data", caption = "Western Governors University") 
+
+#Density plot 
+
+ggplot(churn_clean, aes(x = Tenure, fill = OnlineSecurity)) + 
+
+  geom_density(alpha = 0.4) + 
+
+  labs(title = "Length of Tenure by OnlineSecurity") 
+
+#Density Ridge 
+
+ggplot(churn_clean, aes(x = Tenure, y = OnlineSecurity, fill = OnlineSecurity)) + 
+
+  geom_density_ridges() + 
+
+  theme_ridges() + 
+
+  labs("Length of Tenure by Online Security") + 
+
+  theme(legend.position = "none")    
+
+  
+
+#Stacked bar chart Tenure, OnlineBackup 
+
+ggplot(churn_clean, aes(x = Tenure, y = OnlineBackup, fill = OnlineBackup)) + 
+
+  geom_col(position = "stack") 
+
+#Scatter plot 
+
+ggplot(churn_clean, aes(x = Tenure, y = OnlineBackup, fill = OnlineBackup)) + 
+
+  geom_point(color = "steelblue") + 
+
+  geom_smooth(method = "lm", 
+
+              formula = y ~ poly(x,2), 
+
+              color = "indianred2") 
+
+#Line plot 
+
+ggplot(churn_clean, aes(x = Tenure, y = OnlineBackup)) + 
+
+  geom_line(size = 2, color = "lightgrey") + 
+
+  geom_point(size = .5, color = "steelblue") + 
+
+  labs(y = "Online Backup", x = "Length of Tenure", title = "Length of Tenure by Online Backup",  
+
+       subtitle = "Telecom Churn Data", caption = "Western Governors University") 
+
+#Density plot 
+
+ggplot(churn_clean, aes(x = Tenure, fill = OnlineBackup)) + 
+
+  geom_density(alpha = 0.4) + 
+
+  labs(title = "Length of Tenure by Online Backup") 
+
+#Density Ridge 
+
+ggplot(churn_clean, aes(x = Tenure, y = OnlineBackup, fill = OnlineBackup)) + 
+
+  geom_density_ridges() + 
+
+  theme_ridges() + 
+
+  labs("Length of Tenure by Online Backup") + 
+
+  theme(legend.position = "none") 
+
+  
+
+#Stacked bar chart Tenure, Device Protection 
+
+ggplot(churn_clean, aes(x = Tenure, y = DeviceProtection, fill = DeviceProtection)) + 
+
+  geom_col(position = "stack") 
+
+#Scatter plot 
+
+ggplot(churn_clean, aes(x = Tenure, y = DeviceProtection, fill = DeviceProtection)) + 
+
+  geom_point(color = "steelblue") + 
+
+  geom_smooth(method = "lm", 
+
+              formula = y ~ poly(x,2), 
+
+              color = "indianred2") 
+
+#Line plot 
+
+ggplot(churn_clean, aes(x = Tenure, y = DeviceProtection)) + 
+
+  geom_line(size = 2, color = "lightgrey") + 
+
+  geom_point(size = .5, color = "steelblue") + 
+
+  labs(y = "Device Protection", x = "Length of Tenure", title = "Length of Tenure by Device Protection",  
+
+       subtitle = "Telecom Churn Data", caption = "Western Governors University") 
+
+#Density plot 
+
+ggplot(churn_clean, aes(x = Tenure, fill = DeviceProtection)) + 
+
+  geom_density(alpha = 0.4) + 
+
+  labs(title = "Length of Tenure by Device Protection") 
+
+#Density Ridge 
+
+ggplot(churn_clean, aes(x = Tenure, y = DeviceProtection, fill = DeviceProtection)) + 
+
+  geom_density_ridges() + 
+
+  theme_ridges() + 
+
+  labs("Length of Tenure by Device Protection") + 
+
+  theme(legend.position = "none")    
+
+  
+
+#Stacked bar chart Tenure, TechSupport 
+
+ggplot(churn_clean, aes(x = Tenure, y = TechSupport, fill = TechSupport)) + 
+
+  geom_col(position = "stack") 
+
+#Scatter plot 
+
+ggplot(churn_clean, aes(x = Tenure, y = TechSupport, fill = TechSupport)) + 
+
+  geom_point(color = "steelblue") + 
+
+  geom_smooth(method = "lm", 
+
+              formula = y ~ poly(x,2), 
+
+              color = "indianred2") 
+
+#Line plot 
+
+ggplot(churn_clean, aes(x = Tenure, y = TechSupport)) + 
+
+  geom_line(size = 2, color = "lightgrey") + 
+
+  geom_point(size = .5, color = "steelblue") + 
+
+  labs(y = "Tech Support", x = "Length of Tenure", title = "Length of Tenure by Tech Support",  
+
+       subtitle = "Telecom Churn Data", caption = "Western Governors University") 
+
+#Density plot 
+
+ggplot(churn_clean, aes(x = Tenure, fill = TechSupport)) + 
+
+  geom_density(alpha = 0.4) + 
+
+  labs(title = "Length of Tenure by Tech Support") 
+
+#Density Ridge 
+
+ggplot(churn_clean, aes(x = Tenure, y = TechSupport, fill = TechSupport)) + 
+
+  geom_density_ridges() + 
+
+  theme_ridges() + 
+
+  labs("Length of Tenure by Tech Support") + 
+
+  theme(legend.position = "none")   
+
+  
+
+#Stacked bar chart Tenure, StreamingTV 
+
+ggplot(churn_clean, aes(x = Tenure, y = StreamingTV, fill = StreamingTV)) + 
+
+  geom_col(position = "stack") 
+
+#Scatter plot 
+
+ggplot(churn_clean, aes(x = Tenure, y = StreamingTV, fill = StreamingTV)) + 
+
+  geom_point(color = "steelblue") + 
+
+  geom_smooth(method = "lm", 
+
+              formula = y ~ poly(x,2), 
+
+              color = "indianred2") 
+
+#Line plot 
+
+ggplot(churn_clean, aes(x = Tenure, y = StreamingTV)) + 
+
+  geom_line(size = 2, color = "lightgrey") + 
+
+  geom_point(size = .5, color = "steelblue") + 
+
+  labs(y = "Streaming TV", x = "Length of Tenure", title = "Length of Tenure by Streaming TV",  
+
+       subtitle = "Telecom Churn Data", caption = "Western Governors University") 
+
+#Density plot 
+
+ggplot(churn_clean, aes(x = Tenure, fill = StreamingTV)) + 
+
+  geom_density(alpha = 0.4) + 
+
+  labs(title = "Length of Tenure by StreamingTV") 
+
+#Density Ridge 
+
+ggplot(churn_clean, aes(x = Tenure, y = StreamingTV, fill = StreamingTV)) + 
+
+  geom_density_ridges() + 
+
+  theme_ridges() + 
+
+  labs("Length of Tenure by Streaming TV") + 
+
+  theme(legend.position = "none")   
+
+  
+
+#Stacked bar chart Tenure, Streaming Movies 
+
+ggplot(churn_clean, aes(x = Tenure, y = StreamingMovies, fill = StreamingMovies)) + 
+
+  geom_col(position = "stack") 
+
+#Scatter plot 
+
+ggplot(churn_clean, aes(x = Tenure, y = StreamingMovies, fill = StreamingMovies)) + 
+
+  geom_point(color = "steelblue") + 
+
+  geom_smooth(method = "lm", 
+
+              formula = y ~ poly(x,2), 
+
+              color = "indianred2") 
+
+#Line plot 
+
+ggplot(churn_clean, aes(x = Tenure, y = StreamingMovies)) + 
+
+  geom_line(size = 2, color = "lightgrey") + 
+
+  geom_point(size = .5, color = "steelblue") + 
+
+  labs(y = "Streaming Movies", x = "Length of Tenure", title = "Length of Tenure by Streaming Movies",  
+
+       subtitle = "Telecom Churn Data", caption = "Western Governors University") 
+
+#Density plot 
+
+ggplot(churn_clean, aes(x = Tenure, fill = StreamingMovies)) + 
+
+  geom_density(alpha = 0.4) + 
+
+  labs(title = "Length of Tenure by StreamingMovies") 
+
+#Density Ridge 
+
+ggplot(churn_clean, aes(x = Tenure, y = StreamingMovies, fill = StreamingMovies)) + 
+
+  geom_density_ridges() + 
+
+  theme_ridges() + 
+
+  labs("Length of Tenure by Streaming Movies") + 
+
+  theme(legend.position = "none")    
+
+  
+
+#Stacked bar chart Tenure, PaperlessBilling 
+
+ggplot(churn_clean, aes(x = Tenure, y = PaperlessBilling, fill = PaperlessBilling)) + 
+
+  geom_col(position = "stack") 
+
+#Scatter plot 
+
+ggplot(churn_clean, aes(x = Tenure, y = PaperlessBilling, fill = PaperlessBilling)) + 
+
+  geom_point(color = "steelblue") + 
+
+  geom_smooth(method = "lm", 
+
+              formula = y ~ poly(x,2), 
+
+              color = "indianred2") 
+
+#Line plot 
+
+ggplot(churn_clean, aes(x = Tenure, y = PaperlessBilling)) + 
+
+  geom_line(size = 2, color = "lightgrey") + 
+
+  geom_point(size = .5, color = "steelblue") + 
+
+  labs(y = "Paperless Billing", x = "Length of Tenure", title = "Length of Tenure by Paperless Billing",  
+
+       subtitle = "Telecom Churn Data", caption = "Western Governors University") 
+
+#Density plot 
+
+ggplot(churn_clean, aes(x = Tenure, fill = PaperlessBilling)) + 
+
+  geom_density(alpha = 0.4) + 
+
+  labs(title = "Length of Tenure by Paperless Billing") 
+
+#Density Ridge 
+
+ggplot(churn_clean, aes(x = Tenure, y = PaperlessBilling, fill = PaperlessBilling)) + 
+
+  geom_density_ridges() + 
+
+  theme_ridges() + 
+
+  labs("Length of Tenure by Paperless Billing") + 
+
+  theme(legend.position = "none") 
+
+  
+
+#Encode categorical variables [in-text citation: (Statistics Globe, n.d.)]   
+
+#Encode Churn   
+
+churn_clean$Churn <- as.character(churn_clean$Churn)   
+
+churn_clean$Churn[churn_clean$Churn == "Yes"] <- 1   
+
+churn_clean$Churn[churn_clean$Churn == "No"] <- 0   
+
+churn_clean$Churn <- as.factor(churn_clean$Churn)   
+
+  
+
+#Encode Techie   
+
+churn_clean$Techie <- as.character(churn_clean$Techie)   
+
+churn_clean$Techie[churn_clean$Techie == "Yes"] <- 1   
+
+churn_clean$Techie[churn_clean$Techie == "No"] <- 0   
+
+churn_clean$Techie <- as.factor(churn_clean$Techie)   
+
+  
+
+#Encode Port Modem   
+
+churn_clean$Port_modem <- as.character(churn_clean$Port_modem)   
+
+churn_clean$Port_modem[churn_clean$Port_modem == "Yes"] <- 1   
+
+churn_clean$Port_modem[churn_clean$Port_modem == "No"] <- 0   
+
+churn_clean$Port_modem <- as.factor(churn_clean$Port_modem)   
+
+  
+
+#Encode Port Tablet   
+
+churn_clean$Tablet <- as.character(churn_clean$Tablet)   
+
+churn_clean$Tablet[churn_clean$Tablet == "Yes"] <- 1   
+
+churn_clean$Tablet[churn_clean$Tablet == "No"] <- 0   
+
+churn_clean$Tablet <- as.factor(churn_clean$Tablet)   
+
+  
+
+#Encode Phone   
+
+churn_clean$Phone <- as.character(churn_clean$Phone)   
+
+churn_clean$Phone[churn_clean$Phone == "Yes"] <- 1   
+
+churn_clean$Phone[churn_clean$Phone == "No"] <- 0   
+
+churn_clean$Phone <- as.factor(churn_clean$Phone)   
+
+  
+
+#Encode Multiple   
+
+churn_clean$Multiple <- as.character(churn_clean$Multiple)   
+
+churn_clean$Multiple[churn_clean$Multiple == "Yes"] <- 1   
+
+churn_clean$Multiple[churn_clean$Multiple == "No"] <- 0   
+
+churn_clean$Multiple <- as.factor(churn_clean$Multiple)   
+
+  
+
+#Encode Online Security   
+
+churn_clean$OnlineSecurity <- as.character(churn_clean$OnlineSecurity)   
+
+churn_clean$OnlineSecurity[churn_clean$OnlineSecurity == "Yes"] <- 1   
+
+churn_clean$OnlineSecurity[churn_clean$OnlineSecurity == "No"] <- 0   
+
+churn_clean$OnlineSecurity <- as.factor(churn_clean$OnlineSecurity)   
+
+  
+
+#Encode Online Backup   
+
+churn_clean$OnlineBackup <- as.character(churn_clean$OnlineBackup)   
+
+churn_clean$OnlineBackup[churn_clean$OnlineBackup == "Yes"] <- 1   
+
+churn_clean$OnlineBackup[churn_clean$OnlineBackup == "No"] <- 0   
+
+churn_clean$OnlineBackup <- as.factor(churn_clean$OnlineBackup)   
+
+  
+
+#Encode Device Protection   
+
+churn_clean$DeviceProtection <- as.character(churn_clean$DeviceProtection)   
+
+churn_clean$DeviceProtection[churn_clean$DeviceProtection == "Yes"] <- 1   
+
+churn_clean$DeviceProtection[churn_clean$DeviceProtection == "No"] <- 0   
+
+churn_clean$DeviceProtection <- as.factor(churn_clean$DeviceProtection)   
+
+  
+
+#Encode Tech Support   
+
+churn_clean$TechSupport <- as.character(churn_clean$TechSupport)   
+
+churn_clean$TechSupport[churn_clean$TechSupport == "Yes"] <- 1   
+
+churn_clean$TechSupport[churn_clean$TechSupport == "No"] <- 0   
+
+churn_clean$TechSupport <- as.factor(churn_clean$TechSupport)   
+
+  
+
+#Encode Streaming TV   
+
+churn_clean$StreamingTV <- as.character(churn_clean$StreamingTV)   
+
+churn_clean$StreamingTV[churn_clean$StreamingTV == "Yes"] <- 1   
+
+churn_clean$StreamingTV[churn_clean$StreamingTV == "No"] <- 0   
+
+churn_clean$StreamingTV <- as.factor(churn_clean$StreamingTV)   
+
+  
+
+#Encode Streaming Movies   
+
+churn_clean$StreamingMovies <- as.character(churn_clean$StreamingMovies)   
+
+churn_clean$StreamingMovies[churn_clean$StreamingMovies == "Yes"] <- 1   
+
+churn_clean$StreamingMovies[churn_clean$StreamingMovies == "No"] <- 0   
+
+churn_clean$StreamingMovies <- as.factor(churn_clean$StreamingMovies)   
+
+  
+
+#Encode Paperless Billing   
+
+churn_clean$PaperlessBilling <- as.character(churn_clean$PaperlessBilling)   
+
+churn_clean$PaperlessBilling[churn_clean$PaperlessBilling == "Yes"] <- 1   
+
+churn_clean$PaperlessBilling[churn_clean$PaperlessBilling == "No"] <- 0   
+
+churn_clean$PaperlessBilling <- as.factor(churn_clean$PaperlessBilling)   
+
+  
+
+#One-Hot Encoding Area   
+
+library(fastDummies)   
+
+A_treat <- dummy_cols(churn_clean, select_columns = "Area")   
+
+  
+
+#One-Hot Encoding Marital   
+
+M_treat <- dummy_cols(churn_clean, select_columns = "Marital")   
+
+  
+
+#One-Hot Encoding Gender   
+
+G_treat <- dummy_cols(churn_clean, select_columns = "Gender")   
+
+  
+
+#One-Hot Encoding Contract   
+
+C_treat <- dummy_cols(churn_clean, select_columns = "Contract")   
+
+  
+
+#One-Hot Encoding InternetService   
+
+I_treat <- dummy_cols(churn_clean, select_columns = "InternetService")   
+
+  
+
+#One-Hot Encoding PaymentMethod   
+
+P_treat <- dummy_cols(churn_clean, select_columns = "PaymentMethod")  
+
+  
+
+library(tidyverse)   
+
+  
+
+#Put all df in a list [in-text citation: (Zach, 2021)]    
+
+df_list <- list(churn_clean, A_treat, M_treat, G_treat, C_treat, I_treat, P_treat)   
+
+  
+
+#Merge all data frames together using mutate[in-text citation: (Zach, 2021)]    
+
+library (dplyr)   
+
+Mutate_Churn <- mutate(churn_clean, A_treat, C_treat, G_treat, I_treat, M_treat, P_treat)   
+
+  
+
+#Drop columns by name that were duplicates to the variables one-hot encoded   
+
+Mutate_Churn1 <- subset(Mutate_Churn, select = -c(Area, Contract, Gender, InternetService, Marital, PaymentMethod))   
+
+  
+
+#Rename columns with unexpected symbol   
+
+colnames(Mutate_Churn1)[colnames(Mutate_Churn1) == 'Marital_Never Married'] <- 'Marital_NeverMarried'    
+
+colnames(Mutate_Churn1)[colnames(Mutate_Churn1) == 'Contract_One year'] <- 'Contract_OneYear'    
+
+colnames(Mutate_Churn1)[colnames(Mutate_Churn1) == 'Contract_Two Year'] <- 'Contract_TwoYear'   
+
+colnames(Mutate_Churn1)[colnames(Mutate_Churn1) == 'Contract_Month-to-month'] <- 'Contract_Month_To_Month'   
+
+colnames(Mutate_Churn1)[colnames(Mutate_Churn1) == 'InternetService_Fiber Optic'] <- 'InternetService_FiberOptic'    
+
+colnames(Mutate_Churn1)[colnames(Mutate_Churn1) == 'PaymentMethod_Bank Transfer(automatic)'] <- 'PaymentMethod_BankTransfer'    
+
+colnames(Mutate_Churn1)[colnames(Mutate_Churn1) == 'PaymentMethod_Credit Card (automatic)'] <- 'PaymentMethod_CreditCard'    
+
+colnames(Mutate_Churn1)[colnames(Mutate_Churn1) == 'PaymentMethod_Electronic Check'] <- 'PaymentMethod_ElectronicCheck'    
+
+colnames(Mutate_Churn1)[colnames(Mutate_Churn1) == 'PaymentMethod_Mailed Check'] <- 'PaymentMethod_MailedCheck'    
+
+  
+
+#Reduce Model Payment Method, Marital as cardinality is too great and we do not want to proliferate  
+
+Mutate_Churn2 <- subset(Mutate_Churn1, select = -c(Job, TimeZone, Population, 
+
+                                                   Lat, Lng, Zip, County, State, 
+
+                                                   City, UID, Interaction, Customer_id, 
+
+                                                   PaymentMethod_BankTransfer,  
+
+                                                   PaymentMethod_CreditCard,  
+
+                                                   PaymentMethod_ElectronicCheck, 
+
+                                                   PaymentMethod_MailedCheck, 
+
+                                                   Marital_Divorced, Marital_Married, 
+
+                                                   Marital_NeverMarried, Marital_Widowed, 
+
+                                                   Marital_Separated, CaseOrder))  
+
+  
+
+  
+
+str(Mutate_Churn2) 
+
+  
+
+  
+
+#Export clean data   
+
+write.csv(Mutate_Churn2, "C:/Users/ntrei/OneDrive/Documents/MSDA/MutateChurn2.209.2.csv") 
+
+  
+
+#Visualize correlation 
+
+library(corrr) 
+
+Mutate_Churn2 %>%   
+
+  dplyr::select(where(is.numeric)) %>%   
+
+  correlate() %>%   
+
+  shave() %>%   
+
+  rplot(print_cor = TRUE) +   
+
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) 
+
+  
+
+str(Mutate_Churn2) 
+
+describe(Mutate_Churn2) 
+
+  
+
+####DF 
+
+DF <- Mutate_Churn2[c('Children', 
+
+                      'Age', 
+
+                      'Income', 
+
+                      'Outage_sec_perweek', 
+
+                      'Email', 
+
+                      'Contacts', 
+
+                      'Yearly_equip_failure', 
+
+                      'Techie', 
+
+                      'Port_modem', 
+
+                      'Tablet', 
+
+                      'Phone', 
+
+                      'Multiple', 
+
+                      'OnlineSecurity', 
+
+                      'OnlineBackup', 
+
+                      'DeviceProtection', 
+
+                      'TechSupport', 
+
+                      'StreamingTV', 
+
+                      'StreamingMovies', 
+
+                      'PaperlessBilling', 
+
+                      'Churn', 
+
+                      'MonthlyCharge', 
+
+                      'Bandwidth_GB_Year', 
+
+                      'Timely_Response', 
+
+                      'Timely_Fixes', 
+
+                      'Timely_Replacements', 
+
+                      'Reliability', 
+
+                      'Options', 
+
+                      'Respectful_Response', 
+
+                      'Courteous_Exchange', 
+
+                      'Active_Listening', 
+
+                      'Area_Rural', 
+
+                      'Area_Suburban', 
+
+                      'Area_Urban', 
+
+                      'Contract_Month_To_Month', 
+
+                      'Contract_OneYear', 
+
+                      'Contract_TwoYear', 
+
+                      'Gender_Female', 
+
+                      'Gender_Male', 
+
+                      'Gender_Nonbinary', 
+
+                      'InternetService_DSL', 
+
+                      'InternetService_FiberOptic', 
+
+                      'InternetService_None', 
+
+                      'Tenure')] 
+
+  
+
+#Partition data, set seed 
+
+set.seed(1234) 
+
+  
+
+#Proportion for reproducibility- Train 
+
+Train_prop <- 0.7 
+
+  
+
+#Partition data into training and test sets 
+
+Train_indices <- createDataPartition(DF$Tenure, p = Train_prop, list = FALSE) 
+
+Train_data <- DF[Train_indices, ] 
+
+Test_data <- DF[-Train_indices, ] 
+
+  
+
+#CSV files 
+
+write.csv(Train_data, file = "Training_data.2.csv", row.names = FALSE) 
+
+write.csv(Test_data, file = "Test_data.2.csv", row.names = FALSE) 
+
+  
+
+#Load test 
+
+Train_data <- read.csv("Training_data.2.csv") 
+
+Test_data <- read.csv("Test_data.2.csv") 
+
+  
+
+#Extract variables 
+
+X_Train <- Train_data[, c('Children', 
+
+                          'Age', 
+
+                          'Income', 
+
+                          'Outage_sec_perweek', 
+
+                          'Email', 
+
+                          'Contacts', 
+
+                          'Yearly_equip_failure', 
+
+                          'Techie', 
+
+                          'Port_modem', 
+
+                          'Tablet', 
+
+                          'Phone', 
+
+                          'Multiple', 
+
+                          'OnlineSecurity', 
+
+                          'OnlineBackup', 
+
+                          'DeviceProtection', 
+
+                          'TechSupport', 
+
+                          'StreamingTV', 
+
+                          'StreamingMovies', 
+
+                          'PaperlessBilling', 
+
+                          'Churn', 
+
+                          'MonthlyCharge', 
+
+                          'Bandwidth_GB_Year', 
+
+                          'Timely_Response', 
+
+                          'Timely_Fixes', 
+
+                          'Timely_Replacements', 
+
+                          'Reliability', 
+
+                          'Options', 
+
+                          'Respectful_Response', 
+
+                          'Courteous_Exchange', 
+
+                          'Active_Listening', 
+
+                          'Area_Rural', 
+
+                          'Area_Suburban', 
+
+                          'Area_Urban', 
+
+                          'Contract_Month_To_Month', 
+
+                          'Contract_OneYear', 
+
+                          'Contract_TwoYear', 
+
+                          'Gender_Female', 
+
+                          'Gender_Male', 
+
+                          'Gender_Nonbinary', 
+
+                          'InternetService_DSL', 
+
+                          'InternetService_FiberOptic', 
+
+                          'InternetService_None')] 
+
+  
+
+X_Test <- Test_data[, c('Children', 
+
+                        'Age', 
+
+                        'Income', 
+
+                        'Outage_sec_perweek', 
+
+                        'Email', 
+
+                        'Contacts', 
+
+                        'Yearly_equip_failure', 
+
+                        'Techie', 
+
+                        'Port_modem', 
+
+                        'Tablet', 
+
+                        'Phone', 
+
+                        'Multiple', 
+
+                        'OnlineSecurity', 
+
+                        'OnlineBackup', 
+
+                        'DeviceProtection', 
+
+                        'TechSupport', 
+
+                        'StreamingTV', 
+
+                        'StreamingMovies', 
+
+                        'PaperlessBilling', 
+
+                        'Churn', 
+
+                        'MonthlyCharge', 
+
+                        'Bandwidth_GB_Year', 
+
+                        'Timely_Response', 
+
+                        'Timely_Fixes', 
+
+                        'Timely_Replacements', 
+
+                        'Reliability', 
+
+                        'Options', 
+
+                        'Respectful_Response', 
+
+                        'Courteous_Exchange', 
+
+                        'Active_Listening', 
+
+                        'Area_Rural', 
+
+                        'Area_Suburban', 
+
+                        'Area_Urban', 
+
+                        'Contract_Month_To_Month', 
+
+                        'Contract_OneYear', 
+
+                        'Contract_TwoYear', 
+
+                        'Gender_Female', 
+
+                        'Gender_Male', 
+
+                        'Gender_Nonbinary', 
+
+                        'InternetService_DSL', 
+
+                        'InternetService_FiberOptic', 
+
+                        'InternetService_None')] 
+
+  
+
+#Create train and test sets 
+
+Y_train <- Train_data$Tenure 
+
+Y_test <- Test_data$Tenure 
+
+  
+
+#Export Training and Test Data 
+
+write.csv(X_Train, "C:/Users/ntrei/OneDrive/Documents/MSDA/XTrain209.2.csv") 
+
+write.csv(X_Test, "C:/Users/ntrei/OneDrive/Documents/MSDA/XTest209.2.csv") 
+
+write.csv(Y_train, "C:/Users/ntrei/OneDrive/Documents/MSDA/YTrain209.2.csv") 
+
+write.csv(Y_test, "C:/Users/ntrei/OneDrive/Documents/MSDA/YTest209.2.csv") 
+
+  
+
+#Lasso Regression [in text citation: (Poulson, B. 2020)] 
+
+#Load packages 
+
+pacman::p_load(lars, magrittr, pacman, rio, tidyverse) 
+
+  
+
+#Import as tibble 
+
+DF <- import("C:/Users/ntrei/OneDrive/Documents/MSDA/MutateChurn2.209.2.csv") %>% 
+
+  as_tibble() %>% 
+
+  print() 
+
+  
+
+#Get descriptives 
+
+DF %>% summary() 
+
+  
+
+#Variables need to be the same scale 
+
+DF %<>% 
+
+  scale() %>% 
+
+  as_tibble() 
+
+  
+
+#Get descriptives again 
+
+DF %>% summary() 
+
+  
+
+#Data as matrix for lars package 
+
+y <- DF %>% select(Churn) %>% as.matrix() 
+
+X <- DF %>% select(-Churn) %>% as.matrix() 
+
+  
+
+#Compute model 
+
+fit_step <- lars(X, y, type = "stepwise") 
+
+  
+
+#Plot results 
+
+fit_step %>% plot() 
+
+legend( 
+
+  "bottomleft", 
+
+  lwd = 2, 
+
+  col = (1:nrow(X)), 
+
+  legend = colnames(X), 
+
+  cex = .7 
+
+) 
+
+  
+
+#Lasso regression 
+
+Fit_lasso <- lars(X, y, type = "lasso") 
+
+  
+
+#Plot results 
+
+Fit_lasso %>% plot() 
+
+legend( 
+
+  "bottomleft", 
+
+  lwd = 2, 
+
+  col = (1:nrow(X)), 
+
+  legend = colnames(X), 
+
+  cex = .4 
+
+) 
+
+  
+
+#View more results 
+
+Fit_lasso$R2 
+
+Fit_lasso$R2 %>% plot() 
+
+Fit_lasso %>% coef() 
+
+  
+
+#Fit model and calculate MSE and MAE 
+
+# Perform k-fold cross-validation to find the optimal lambda value 
+
+library(glmnet) 
+
+cv_model <- cv.glmnet(x, y, alpha = 1, type.measure = "mse") 
+
+best_lambda <- cv_model$lambda.min # optimal lambda value 
+
+  
+
+# Obtain predictions on the test set using the optimal lambda value 
+
+lasso_pred <- predict(cv_model, s = best_lambda, newx = x) 
+
+  
+
+# Calculate MSE on the test set 
+
+lasso_mse <- mean((y - lasso_pred)^2) 
+
+lasso_mse 
+
+  
+
+plot(lasso_mse) 
+
+plot(lasso_pred) 
+
+plot(best_lambda) 
+
+plot(cv_model) 

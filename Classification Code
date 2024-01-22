@@ -1,0 +1,1419 @@
+#Check the working directory 
+
+getwd() 
+
+  
+
+#Data profiling 
+
+str("~/MSDA/churn_clean")  
+
+  
+
+#Dimensions of data 
+
+dim(churn_clean) 
+
+  #10000 50 
+
+  
+
+# load packages 
+
+#for reading and manipulation of data 
+
+library(data.table)  
+
+# used for data manipulation and joining 
+
+library(dplyr)  
+
+# used for regression 
+
+library(glmnet) 
+
+# used for plotting  
+
+library(ggplot2)  
+
+# used for modeling 
+
+library(caret)  
+
+# used for building XGBoost model 
+
+library(xgboost)  
+
+# used for skewness 
+
+library(e1071)  
+
+# used for combining multiple plots  
+
+library(cowplot)  
+
+#collection of r packages for data science  
+
+library(tidyverse) 
+
+#Perform Naive Bayes Classification 
+
+library(naivebayes) 
+
+# 
+
+library(psych) 
+
+#Tools for training regression and classification models 
+
+library(caret) 
+
+# 
+
+library(ROCR) 
+
+# 
+
+library(rpart) 
+
+# 
+
+library(pROC) 
+
+  
+
+#View data 
+
+glimpse(churn_clean) 
+
+str(churn_clean) 
+
+  
+
+#Detect duplicates 
+
+duplicated("~/MSDA/churn_clean") 
+
+  #No duplicates 
+
+  
+
+#Detect missing values 
+
+colSums(is.na(churn_clean)) 
+
+  #No missing values 
+
+  
+
+#Rename column names item 1- 8 [in-text citation: (Zach, 2022)]   
+
+colnames(churn_clean)[colnames(churn_clean) == 'Item1'] <- 'Timely_Response'   
+
+colnames(churn_clean)[colnames(churn_clean) == 'Item2'] <- 'Timely_Fixes'   
+
+colnames(churn_clean)[colnames(churn_clean) == 'Item3'] <- 'Timely_Replacements'   
+
+colnames(churn_clean)[colnames(churn_clean) == 'Item4'] <- 'Reliability'   
+
+colnames(churn_clean)[colnames(churn_clean) == 'Item5'] <- 'Options'   
+
+colnames(churn_clean)[colnames(churn_clean) == 'Item6'] <- 'Respectful_Response'   
+
+colnames(churn_clean)[colnames(churn_clean) == 'Item7'] <- 'Courteous_Exchange'   
+
+colnames(churn_clean)[colnames(churn_clean) == 'Item8'] <- 'Active_Listening'   
+
+  
+
+#Verify columns renamed successfully  
+
+glimpse(churn_clean) 
+
+  
+
+#Cross tabulation 
+
+xtabs(~ Churn + Gender, data = churn_clean) 
+
+xtabs(~ Churn + Age, data = churn_clean) 
+
+xtabs(~ Churn + Children, data = churn_clean) 
+
+xtabs(~ Churn + Area, data = churn_clean) 
+
+xtabs(~ Churn + TimeZone, data = churn_clean) 
+
+xtabs(~ Churn + State, data = churn_clean) 
+
+xtabs(~ Churn + Marital, data = churn_clean) 
+
+xtabs(~ Churn + Email, data = churn_clean) 
+
+xtabs(~ Churn + Contacts, data = churn_clean) 
+
+xtabs(~ Churn + Yearly_equip_failure, data = churn_clean) 
+
+xtabs(~ Churn + Techie, data = churn_clean) 
+
+xtabs(~ Churn + Contract, data = churn_clean) 
+
+xtabs(~ Churn + Port_modem, data = churn_clean) 
+
+xtabs(~ Churn + Tablet, data = churn_clean) 
+
+xtabs(~ Churn + InternetService, data = churn_clean) 
+
+xtabs(~ Churn + Phone, data = churn_clean) 
+
+xtabs(~ Churn + Multiple, data = churn_clean) 
+
+xtabs(~ Churn + OnlineSecurity, data = churn_clean) 
+
+xtabs(~ Churn + OnlineBackup, data = churn_clean) 
+
+xtabs(~ Churn + DeviceProtection, data = churn_clean) 
+
+xtabs(~ Churn + TechSupport, data = churn_clean) 
+
+xtabs(~ Churn + StreamingTV, data = churn_clean) 
+
+xtabs(~ Churn + StreamingMovies, data = churn_clean) 
+
+xtabs(~ Churn + PaperlessBilling, data = churn_clean) 
+
+xtabs(~ Churn + PaymentMethod, data = churn_clean) 
+
+xtabs(~ Churn + Timely_Response, data = churn_clean) 
+
+xtabs(~ Churn + Timely_Fixes, data = churn_clean) 
+
+xtabs(~ Churn + Timely_Replacements, data = churn_clean) 
+
+xtabs(~ Churn + Reliability, data = churn_clean) 
+
+xtabs(~ Churn + Options, data = churn_clean) 
+
+xtabs(~ Churn + Respectful_Response, data = churn_clean) 
+
+xtabs(~ Churn + Courteous_Exchange, data = churn_clean) 
+
+xtabs(~ Churn + Active_Listening, data = churn_clean) 
+
+  
+
+#Visualizations  
+
+#Boxplot of each variable - detect outliers - Univariate Graphs of each variable  
+
+boxplot(churn_clean$CaseOrder, xlab = "Case Order")   
+
+boxplot(churn_clean$Zip, xlab = "Zip Code")   
+
+boxplot(churn_clean$Lat, xlab = "Lat")   
+
+boxplot(churn_clean$Lng, xlab = "Lng")   
+
+boxplot(churn_clean$Population, xlab = "Population")   
+
+boxplot(churn_clean$Children, xlab = "Children")     
+
+boxplot(churn_clean$Age, xlab = "Age")   
+
+boxplot(churn_clean$Income, xlab = "Income")   
+
+boxplot(churn_clean$Outage_sec_perweek, xlab = "Outage Sec Per Week")   
+
+boxplot(churn_clean$Email, xlab = "Email")   
+
+boxplot(churn_clean$Contacts, xlab = "Contacts")   
+
+boxplot(churn_clean$Yearly_equip_failure, xlab = "Yearly Equip Failures")  
+
+boxplot(churn_clean$Tenure, xlab = "Tenure")   
+
+boxplot(churn_clean$MonthlyCharge, xlab = "Monthly Charge")   
+
+boxplot(churn_clean$Bandwidth_GB_Year, xlab = "Bandwidth GB Year")   
+
+  
+
+#Count and range of variables with outliers  
+
+Children <- churn_clean[which(churn_clean$Children > 7), ]   
+
+str(Children)   
+
+  
+
+Income <- churn_clean[which(churn_clean$Income > 100000), ]   
+
+str(Income)  
+
+  
+
+Outage <- churn_clean[which(churn_clean$Outage_sec_perweek > 20), ]   
+
+str(Outage)   
+
+Outage2 <- churn_clean[which(churn_clean$Outage_sec_perweek < 0), ]   
+
+str(Outage2)   
+
+  
+
+Email <- churn_clean[which(churn_clean$Email > 20), ]   
+
+str(Email)   
+
+Email2 <- churn_clean[which(churn_clean$Email < 4), ]   
+
+str(Email2)   
+
+  
+
+Contacts <- churn_clean[which(churn_clean$Contacts > 5), ]   
+
+str(Contacts)   
+
+  
+
+Equipment <- churn_clean[which(churn_clean$Yearly_equip_failure > 2), ]   
+
+str(Equipment)   
+
+  
+
+Monthly <- churn_clean[which(churn_clean$MonthlyCharge > 300), ]   
+
+str(Monthly)   
+
+  
+
+Timely_Response <- churn_clean[which(churn_clean$Timely_Response > 5), ]   
+
+str(Timely_Response)   
+
+Timely_Response1 <- churn_clean[which(churn_clean$Timely_Response < 2), ]   
+
+str(Timely_Response1)   
+
+  
+
+Timely_Fixes <- churn_clean[which(churn_clean$Timely_Fixes > 5), ]   
+
+str(Timely_Fixes)   
+
+Timely_Fixes2 <- churn_clean[which(churn_clean$Timely_Fixes < 2), ]   
+
+str(Timely_Fixes2)   
+
+  
+
+  
+
+Timely_Replacements <- churn_clean[which(churn_clean$Timely_Replacements > 5), ]   
+
+str(Timely_Replacements)   
+
+Timely_Replacements3 <- churn_clean[which(churn_clean$Timely_Replacements < 2), ]   
+
+str(Timely_Replacements3)   
+
+  
+
+Reliability <- churn_clean[which(churn_clean$Reliability > 5), ]   
+
+str(Reliability)   
+
+Reliability4 <- churn_clean[which(churn_clean$Reliability < 2), ]   
+
+str(Reliability4)   
+
+  
+
+Options <- churn_clean[which(churn_clean$Options > 5), ]   
+
+str(Options)   
+
+Options5 <- churn_clean[which(churn_clean$Options < 2), ]   
+
+str(Options5)   
+
+  
+
+Respectful_Response <- churn_clean[which(churn_clean$Respectful_Response > 5), ]   
+
+str(Respectful_Response)   
+
+Respectful_Response6 <- churn_clean[which(churn_clean$Respectful_Response < 2), ]   
+
+str(Respectful_Response6)   
+
+  
+
+Courteous_Exchange <- churn_clean[which(churn_clean$Courteous_Exchange > 5), ]   
+
+str(Courteous_Exchange)   
+
+Courteous_Exchange7 <- churn_clean[which(churn_clean$Courteous_Exchange < 2), ]   
+
+str(Courteous_Exchange7)   
+
+  
+
+Active_Listening <- churn_clean[which(churn_clean$Active_Listening > 5), ]   
+
+str(Active_Listening)   
+
+Active_Listening8 <- churn_clean[which(churn_clean$Active_Listening < 2), ]   
+
+str(Active_Listening8)   
+
+  
+
+#Summary statistics 
+
+summary(churn_clean) 
+
+  
+
+#Histograms of variables with outliers- Univariate graphs  
+
+hist(churn_clean$Population, col = 'turquoise', main = "Population")    
+
+hist(churn_clean$Children, col = 'turquoise', main = "Children")    
+
+hist(churn_clean$Income, col = 'turquoise', main = "Income")   
+
+hist(churn_clean$Outage_sec_perweek, col = 'turquoise', main = "Outage Sec Perweek")  
+
+hist(churn_clean$Email, col = 'turquoise', main = "Email")  
+
+hist(churn_clean$Contacts, col = 'turquoise', main = "Contacts")  
+
+hist(churn_clean$Yearly_equip_failure, col = 'turquoise', main = "Yearly Equip Failure")  
+
+hist(churn_clean$Timely_Response, col = 'turquoise', main = "Timely Response")   
+
+hist(churn_clean$Timely_Fixes, col = 'turquoise', main = "Timely Fixes")   
+
+hist(churn_clean$Timely_Replacements, col = 'turquoise', main = "Timely Replacements")    
+
+hist(churn_clean$Reliability, col = 'turquoise', main = "Reliability")   
+
+hist(churn_clean$Options, col = 'turquoise', main = "Options")   
+
+hist(churn_clean$Respectful_Response, col = 'turquoise', main = "Respectful Response")   
+
+hist(churn_clean$Courteous_Exchange, col = 'turquoise', main = "Courteous Exchange")   
+
+hist(churn_clean$Active_Listening, col = 'turquoise', main = "Active Listening")   
+
+  
+
+#Explore data variables- univariate graphs [in-text citation: (R programming 101, n.d.)]   
+
+barplot(sort(table(churn_clean$Area)), col = 'blue', main = "Area")   
+
+barplot(sort(table(churn_clean$TimeZone)), col = 'blue', main = "Timezone")   
+
+barplot(sort(table(churn_clean$Children)), col = 'blue', main = "Number of Children")   
+
+barplot(sort(table(churn_clean$Age)), col = 'blue', main = "Age")   
+
+barplot(sort(table(churn_clean$Income)), col = 'blue', main = "Income")   
+
+barplot(sort(table(churn_clean$Marital)), col = 'blue', main = "Marital")   
+
+barplot(sort(table(churn_clean$Gender)), col = 'blue', main = "Gender")   
+
+barplot(sort(table(churn_clean$Churn)), col = 'blue', main = "Churn")   
+
+barplot(sort(table(churn_clean$Outage_sec_perweek)), col = 'blue', main = "Outage Sec Per Week")   
+
+barplot(sort(table(churn_clean$Email)), col = 'blue', main = "Email")   
+
+barplot(sort(table(churn_clean$Contacts)), col = 'blue', main = "Contacts")  
+
+barplot(sort(table(churn_clean$Yearly_equip_failure)), col = 'blue', main = "Yearly Equipment Failure")   
+
+barplot(sort(table(churn_clean$Techie)), col = 'blue', main = "Techie")   
+
+barplot(sort(table(churn_clean$Contract)), col = 'blue', main = "Contracts")  
+
+barplot(sort(table(churn_clean$Port_modem)), col = 'blue', main = "Port Modem")   
+
+barplot(sort(table(churn_clean$Tablet)), col = 'blue', main = "Tablet")   
+
+barplot(sort(table(churn_clean$InternetService)), col = 'blue', main = "Internet Service")  
+
+barplot(sort(table(churn_clean$Phone)), col = 'blue', main = "Phone")   
+
+barplot(sort(table(churn_clean$Multiple)), col = 'blue', main = "Multiple")   
+
+barplot(sort(table(churn_clean$OnlineSecurity)), col = 'blue', main = "Online Security")   
+
+barplot(sort(table(churn_clean$OnlineBackup)), col = 'blue', main = "Online Backup")   
+
+barplot(sort(table(churn_clean$DeviceProtection)), col = 'blue', main = "Device Protection")  
+
+barplot(sort(table(churn_clean$TechSupport)), col = 'blue', main = "Tech Support")   
+
+barplot(sort(table(churn_clean$StreamingTV)), col = 'blue', main = "Streaming TV")   
+
+barplot(sort(table(churn_clean$StreamingMovies)), col = 'blue', main = "Streaming Movies")   
+
+barplot(sort(table(churn_clean$PaperlessBilling)), col = 'blue', main = "Paperless Billing")  
+
+barplot(sort(table(churn_clean$PaymentMethod)), col = 'blue', main = "Payment Method")   
+
+barplot(sort(table(churn_clean$Tenure)), col = 'blue', main = "Tenure")   
+
+barplot(sort(table(churn_clean$MonthlyCharge)), col = 'blue', main = "Monthly Charge")   
+
+barplot(sort(table(churn_clean$Bandwidth_GB_Year)), col = 'blue', main = "Bandwidth GB Year")   
+
+barplot(sort(table(churn_clean$Timely_Response)), main = "Timely Response")   
+
+barplot(sort(table(churn_clean$Timely_Fixes)), col = 'blue', main = "Timely Fixes")   
+
+barplot(sort(table(churn_clean$Timely_Replacements)), col = 'blue', main = "Timely Replacements")   
+
+barplot(sort(table(churn_clean$Reliability)), col = 'blue', main = "Reliability")  
+
+barplot(sort(table(churn_clean$Options)), col = 'blue', main = "Options")   
+
+barplot(sort(table(churn_clean$Respectful_Response)), col = 'blue', main = "Respecftful Response")   
+
+barplot(sort(table(churn_clean$Courteous_Exchange)), col = 'blue', main = "Courteous Exchange")   
+
+barplot(sort(table(churn_clean$Active_Listening)), col = 'blue', main = "Active Listening")   
+
+  
+
+  
+
+#BiVariate Graph of each variable   
+
+library(ggplot2)   
+
+ggplot(data = churn_clean,     
+
+       mapping =  aes(x = Churn, y = Area)) + 
+
+       geom_point(color = "coral", alpha = .7, size = 2) +    
+
+       geom_smooth(method = "lm", se = FALSE, linewidth = 1.5)    
+
+  
+
+#ggplot(churn_clean, aes(x = Churn, y = Area, color = Churn)) + 
+
+  #geom_point() 
+
+  
+
+ggplot(data = churn_clean,     
+
+       mapping = aes(x = Churn, y = Contract)) +  
+
+       geom_point(color = "cornflowerblue", alpha = .7, size = 2) +    
+
+       geom_smooth(method = "lm", se = FALSE, linewidth = 1.5)    
+
+  
+
+ggplot(data = churn_clean,     
+
+       mapping =  aes(x = Churn, y = Gender)) +   
+
+       geom_point(color = "cornflowerblue", alpha = .7, size = 2) +    
+
+       geom_smooth(method = "lm", se = FALSE, linewidth = 1.5)    
+
+  
+
+ggplot(data = churn_clean,     
+
+       mapping =  aes(x = Churn, y = Marital)) +   
+
+       geom_point(color = "cornflowerblue", alpha = .7, size = 2) +    
+
+       geom_smooth(method = "lm", se = FALSE, linewidth = 1.5)    
+
+  
+
+ggplot(data = churn_clean,     
+
+       mapping =  aes(x = Churn, y = InternetService)) +   
+
+       geom_point(color = "cornflowerblue", alpha = .7, size = 2) +    
+
+       geom_smooth(method = "lm", se = FALSE, linewidth = 1.5)    
+
+  
+
+ggplot(data = churn_clean,     
+
+       mapping =  aes(x = Churn, y = PaymentMethod)) +   
+
+       geom_point(color = "cornflowerblue", alpha = .7, size = 2) +    
+
+       geom_smooth(method = "lm", se = FALSE, linewidth = 1.5)    
+
+  
+
+ggplot(data = churn_clean,     
+
+       mapping =  aes(x = Churn, y = Tenure)) +   
+
+       geom_point(color = "cornflowerblue", alpha = .7, size = 2) +    
+
+       geom_smooth(method = "lm", se = FALSE, linewidth = 1.5)    
+
+  
+
+ggplot(data = churn_clean,     
+
+       mapping =  aes(x = Churn, y = Techie)) +   
+
+       geom_point(color = "cornflowerblue", alpha = .7, size = 2) +    
+
+       geom_smooth(method = "lm", se = FALSE, linewidth = 1.5)    
+
+  
+
+ggplot(data = churn_clean,     
+
+       mapping =  aes(x = Churn, y = Port_modem)) +   
+
+       geom_point(color = "cornflowerblue", alpha = .7, size = 2) +    
+
+       geom_smooth(method = "lm", se = FALSE, linewidth = 1.5)    
+
+  
+
+ggplot(data = churn_clean,     
+
+       mapping =  aes(x = Churn, y = Tablet)) + 
+
+       geom_point(color = "cornflowerblue", alpha = .7, size = 2) +    
+
+       geom_smooth(method = "lm", se = FALSE, linewidth = 1.5)    
+
+  
+
+ggplot(data = churn_clean,     
+
+       mapping =  aes(x = Churn, y = Phone)) +   
+
+       geom_point(color = "cornflowerblue", alpha = .7, size = 2) +    
+
+       geom_smooth(method = "lm", se = FALSE, linewidth = 1.5)    
+
+  
+
+ggplot(data = churn_clean,    
+
+       mapping =  aes(x = Churn, y = Multiple)) +   
+
+       geom_point(color = "cornflowerblue", alpha = .7, size = 2) +    
+
+       geom_smooth(method = "lm", se = FALSE, linewidth = 1.5)    
+
+  
+
+ggplot(data = churn_clean,    
+
+       mapping =  aes(x = Churn, y = OnlineSecurity)) +   
+
+       geom_point(color = "cornflowerblue", alpha = .7, size = 2) +    
+
+       geom_smooth(method = "lm", se = FALSE, linewidth = 1.5)    
+
+  
+
+ggplot(data = churn_clean,   
+
+       mapping =  aes(x = Churn, y = OnlineBackup)) +   
+
+       geom_point(color = "cornflowerblue", alpha = .7,   
+
+       size = 2) + geom_smooth(method = "lm", se = FALSE,   
+
+       linewidth = 1.5)    
+
+  
+
+ggplot(data = churn_clean,   
+
+       mapping =  aes(x = Churn, y = DeviceProtection)) +   
+
+       geom_point(color = "cornflowerblue", alpha = .7, size = 2) +    
+
+       geom_smooth(method = "lm", se = FALSE, linewidth = 1.5)    
+
+  
+
+ggplot(data = churn_clean,    
+
+       mapping =  aes(x = Churn, y = TechSupport)) +   
+
+       geom_point(color = "cornflowerblue", alpha = .7, size = 2) +   
+
+       geom_smooth(method = "lm", se = FALSE, linewidth = 1.5)   
+
+  
+
+ggplot(data = churn_clean,     
+
+       mapping =  aes(x = Churn, y = StreamingTV)) + 
+
+       geom_point(color = "cornflowerblue", alpha = .7, size = 2) +   
+
+       geom_smooth(method = "lm", se = FALSE, linewidth = 1.5)    
+
+  
+
+ggplot(data = churn_clean,     
+
+       mapping =  aes(x = Churn, y = StreamingMovies)) + 
+
+       geom_point(color = "cornflowerblue", alpha = .7, size = 2) +    
+
+       geom_smooth(method = "lm", se = FALSE, linewidth = 1.5)    
+
+  
+
+ggplot(data = churn_clean,     
+
+       mapping =  aes(x = Churn, y = PaperlessBilling)) +   
+
+       geom_point(color = "cornflowerblue", alpha = .7, size = 2) +    
+
+       geom_smooth(method = "lm", se = FALSE, linewidth = 1.5)   
+
+  
+
+#Encode categorical variables [in-text citation: (Statistics Globe, n.d.)]   
+
+#Encode Churn   
+
+churn_clean$Churn <- as.character(churn_clean$Churn)   
+
+churn_clean$Churn[churn_clean$Churn == "Yes"] <- 1   
+
+churn_clean$Churn[churn_clean$Churn == "No"] <- 0   
+
+churn_clean$Churn <- as.factor(churn_clean$Churn)   
+
+  
+
+#Encode Techie   
+
+churn_clean$Techie <- as.character(churn_clean$Techie)   
+
+churn_clean$Techie[churn_clean$Techie == "Yes"] <- 1   
+
+churn_clean$Techie[churn_clean$Techie == "No"] <- 0   
+
+churn_clean$Techie <- as.factor(churn_clean$Techie)   
+
+  
+
+#Encode Port Modem   
+
+churn_clean$Port_modem <- as.character(churn_clean$Port_modem)   
+
+churn_clean$Port_modem[churn_clean$Port_modem == "Yes"] <- 1   
+
+churn_clean$Port_modem[churn_clean$Port_modem == "No"] <- 0   
+
+churn_clean$Port_modem <- as.factor(churn_clean$Port_modem)   
+
+  
+
+#Encode Port Tablet   
+
+churn_clean$Tablet <- as.character(churn_clean$Tablet)   
+
+churn_clean$Tablet[churn_clean$Tablet == "Yes"] <- 1   
+
+churn_clean$Tablet[churn_clean$Tablet == "No"] <- 0   
+
+churn_clean$Tablet <- as.factor(churn_clean$Tablet)   
+
+  
+
+#Encode Phone   
+
+churn_clean$Phone <- as.character(churn_clean$Phone)   
+
+churn_clean$Phone[churn_clean$Phone == "Yes"] <- 1   
+
+churn_clean$Phone[churn_clean$Phone == "No"] <- 0   
+
+churn_clean$Phone <- as.factor(churn_clean$Phone)   
+
+  
+
+#Encode Multiple   
+
+churn_clean$Multiple <- as.character(churn_clean$Multiple)   
+
+churn_clean$Multiple[churn_clean$Multiple == "Yes"] <- 1   
+
+churn_clean$Multiple[churn_clean$Multiple == "No"] <- 0   
+
+churn_clean$Multiple <- as.factor(churn_clean$Multiple)   
+
+  
+
+#Encode Online Security   
+
+churn_clean$OnlineSecurity <- as.character(churn_clean$OnlineSecurity)   
+
+churn_clean$OnlineSecurity[churn_clean$OnlineSecurity == "Yes"] <- 1   
+
+churn_clean$OnlineSecurity[churn_clean$OnlineSecurity == "No"] <- 0   
+
+churn_clean$OnlineSecurity <- as.factor(churn_clean$OnlineSecurity)   
+
+  
+
+#Encode Online Backup   
+
+churn_clean$OnlineBackup <- as.character(churn_clean$OnlineBackup)   
+
+churn_clean$OnlineBackup[churn_clean$OnlineBackup == "Yes"] <- 1   
+
+churn_clean$OnlineBackup[churn_clean$OnlineBackup == "No"] <- 0   
+
+churn_clean$OnlineBackup <- as.factor(churn_clean$OnlineBackup)   
+
+  
+
+#Encode Device Protection   
+
+churn_clean$DeviceProtection <- as.character(churn_clean$DeviceProtection)   
+
+churn_clean$DeviceProtection[churn_clean$DeviceProtection == "Yes"] <- 1   
+
+churn_clean$DeviceProtection[churn_clean$DeviceProtection == "No"] <- 0   
+
+churn_clean$DeviceProtection <- as.factor(churn_clean$DeviceProtection)   
+
+  
+
+#Encode Tech Support   
+
+churn_clean$TechSupport <- as.character(churn_clean$TechSupport)   
+
+churn_clean$TechSupport[churn_clean$TechSupport == "Yes"] <- 1   
+
+churn_clean$TechSupport[churn_clean$TechSupport == "No"] <- 0   
+
+churn_clean$TechSupport <- as.factor(churn_clean$TechSupport)   
+
+  
+
+#Encode Streaming TV   
+
+churn_clean$StreamingTV <- as.character(churn_clean$StreamingTV)   
+
+churn_clean$StreamingTV[churn_clean$StreamingTV == "Yes"] <- 1   
+
+churn_clean$StreamingTV[churn_clean$StreamingTV == "No"] <- 0   
+
+churn_clean$StreamingTV <- as.factor(churn_clean$StreamingTV)   
+
+  
+
+#Encode Streaming Movies   
+
+churn_clean$StreamingMovies <- as.character(churn_clean$StreamingMovies)   
+
+churn_clean$StreamingMovies[churn_clean$StreamingMovies == "Yes"] <- 1   
+
+churn_clean$StreamingMovies[churn_clean$StreamingMovies == "No"] <- 0   
+
+churn_clean$StreamingMovies <- as.factor(churn_clean$StreamingMovies)   
+
+  
+
+#Encode Paperless Billing   
+
+churn_clean$PaperlessBilling <- as.character(churn_clean$PaperlessBilling)   
+
+churn_clean$PaperlessBilling[churn_clean$PaperlessBilling == "Yes"] <- 1   
+
+churn_clean$PaperlessBilling[churn_clean$PaperlessBilling == "No"] <- 0   
+
+churn_clean$PaperlessBilling <- as.factor(churn_clean$PaperlessBilling)   
+
+  
+
+#One-Hot Encoding Area   
+
+library(fastDummies)   
+
+A_treat <- dummy_cols(churn_clean, select_columns = "Area")   
+
+  
+
+#One-Hot Encoding Marital   
+
+M_treat <- dummy_cols(churn_clean, select_columns = "Marital")   
+
+  
+
+#One-Hot Encoding Gender   
+
+G_treat <- dummy_cols(churn_clean, select_columns = "Gender")   
+
+  
+
+#One-Hot Encoding Contract   
+
+C_treat <- dummy_cols(churn_clean, select_columns = "Contract")   
+
+  
+
+#One-Hot Encoding InternetService   
+
+I_treat <- dummy_cols(churn_clean, select_columns = "InternetService")   
+
+  
+
+#One-Hot Encoding PaymentMethod   
+
+P_treat <- dummy_cols(churn_clean, select_columns = "PaymentMethod")  
+
+  
+
+library(tidyverse)   
+
+  
+
+#Put all df in a list [in-text citation: (Zach, 2021)]    
+
+df_list <- list(churn_clean, A_treat, M_treat, G_treat, C_treat, I_treat, P_treat)   
+
+  
+
+#Merge all data frames together using mutate[in-text citation: (Zach, 2021)]    
+
+library (dplyr)   
+
+Mutate_Churn <- mutate(churn_clean, A_treat, C_treat, G_treat, I_treat, M_treat, P_treat)   
+
+  
+
+#Drop columns by name that were duplicates to the variables one-hot encoded   
+
+Mutate_Churn1 <- subset(Mutate_Churn, select = -c(Area, Contract, Gender, InternetService, Marital, PaymentMethod))   
+
+  
+
+#Rename columns with unexpected symbol   
+
+colnames(Mutate_Churn1)[colnames(Mutate_Churn1) == 'Marital_Never Married'] <- 'Marital_NeverMarried'    
+
+colnames(Mutate_Churn1)[colnames(Mutate_Churn1) == 'Contract_One year'] <- 'Contract_OneYear'    
+
+colnames(Mutate_Churn1)[colnames(Mutate_Churn1) == 'Contract_Two Year'] <- 'Contract_TwoYear'   
+
+colnames(Mutate_Churn1)[colnames(Mutate_Churn1) == 'Contract_Month-to-month'] <- 'Contract_Month_To_Month'   
+
+colnames(Mutate_Churn1)[colnames(Mutate_Churn1) == 'InternetService_Fiber Optic'] <- 'InternetService_FiberOptic'    
+
+colnames(Mutate_Churn1)[colnames(Mutate_Churn1) == 'PaymentMethod_Bank Transfer(automatic)'] <- 'PaymentMethod_BankTransfer'    
+
+colnames(Mutate_Churn1)[colnames(Mutate_Churn1) == 'PaymentMethod_Credit Card (automatic)'] <- 'PaymentMethod_CreditCard'    
+
+colnames(Mutate_Churn1)[colnames(Mutate_Churn1) == 'PaymentMethod_Electronic Check'] <- 'PaymentMethod_ElectronicCheck'    
+
+colnames(Mutate_Churn1)[colnames(Mutate_Churn1) == 'PaymentMethod_Mailed Check'] <- 'PaymentMethod_MailedCheck'    
+
+  
+
+#Reduce Model Payment Method, Marital as cardinality is too great and we do not want to proliferate  
+
+Mutate_Churn2 <- subset(Mutate_Churn1, select = -c(Job, TimeZone, Population, 
+
+                                                         Lat, Lng, Zip, County, State, 
+
+                                                         City, UID, Interaction, Customer_id, 
+
+                                                         PaymentMethod_BankTransfer,  
+
+                                                         PaymentMethod_CreditCard,  
+
+                                                         PaymentMethod_ElectronicCheck, 
+
+                                                         PaymentMethod_MailedCheck, 
+
+                                                         Marital_Divorced, Marital_Married, 
+
+                                                         Marital_NeverMarried, Marital_Widowed, 
+
+                                                         Marital_Separated, CaseOrder))  
+
+  
+
+  
+
+str(Mutate_Churn2) 
+
+  
+
+  
+
+#Export clean data   
+
+write.csv(Mutate_Churn2, "C:/Users/ntrei/OneDrive/Documents/MSDA/MutateChurn2.209.csv") 
+
+  
+
+#Visualize correlation 
+
+library(corrr) 
+
+Mutate_Churn2 %>%   
+
+  dplyr::select(where(is.numeric)) %>%   
+
+  correlate() %>%   
+
+  shave() %>%   
+
+  rplot(print_cor = TRUE) +   
+
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) 
+
+  
+
+str(Mutate_Churn2) 
+
+describe(Mutate_Churn2) 
+
+  
+
+  
+
+####DF 
+
+DF <- Mutate_Churn2[c('Children', 
+
+                             'Age', 
+
+                             'Income', 
+
+                             'Outage_sec_perweek', 
+
+                             'Email', 
+
+                             'Contacts', 
+
+                             'Yearly_equip_failure', 
+
+                             'Techie', 
+
+                             'Port_modem', 
+
+                             'Tablet', 
+
+                             'Phone', 
+
+                             'Multiple', 
+
+                             'OnlineSecurity', 
+
+                             'OnlineBackup', 
+
+                             'DeviceProtection', 
+
+                             'TechSupport', 
+
+                             'StreamingTV', 
+
+                             'StreamingMovies', 
+
+                             'PaperlessBilling', 
+
+                             'Tenure', 
+
+                             'MonthlyCharge', 
+
+                             'Bandwidth_GB_Year', 
+
+                             'Timely_Response', 
+
+                             'Timely_Fixes', 
+
+                             'Timely_Replacements', 
+
+                             'Reliability', 
+
+                             'Options', 
+
+                             'Respectful_Response', 
+
+                             'Courteous_Exchange', 
+
+                             'Active_Listening', 
+
+                             'Area_Rural', 
+
+                             'Area_Suburban', 
+
+                             'Area_Urban', 
+
+                             'Contract_Month_To_Month', 
+
+                             'Contract_OneYear', 
+
+                             'Contract_TwoYear', 
+
+                             'Gender_Female', 
+
+                             'Gender_Male', 
+
+                             'Gender_Nonbinary', 
+
+                             'InternetService_DSL', 
+
+                             'InternetService_FiberOptic', 
+
+                             'InternetService_None', 
+
+                             'Churn')] 
+
+  
+
+#Partition data, set seed 
+
+set.seed(1234) 
+
+  
+
+#Proportion for reproducibility- Train 
+
+Train_prop <- 0.7 
+
+  
+
+#Partition data into training and test sets 
+
+Train_indices <- createDataPartition(DF$Churn, p = Train_prop, list = FALSE) 
+
+Train_data <- DF[Train_indices, ] 
+
+Test_data <- DF[-Train_indices, ] 
+
+  
+
+#CSV files 
+
+write.csv(Train_data, file = "Training_data.csv", row.names = FALSE) 
+
+write.csv(Test_data, file = "Test_data.csv", row.names = FALSE) 
+
+  
+
+#Load test 
+
+Train_data <- read.csv("Training_data.csv") 
+
+Test_data <- read.csv("Test_data.csv") 
+
+  
+
+#Extract variables 
+
+X_Train <- Train_data[, c('Children', 
+
+                          'Age', 
+
+                          'Income', 
+
+                          'Outage_sec_perweek', 
+
+                          'Email', 
+
+                          'Contacts', 
+
+                          'Yearly_equip_failure', 
+
+                          'Techie', 
+
+                          'Port_modem', 
+
+                          'Tablet', 
+
+                          'Phone', 
+
+                          'Multiple', 
+
+                          'OnlineSecurity', 
+
+                          'OnlineBackup', 
+
+                          'DeviceProtection', 
+
+                          'TechSupport', 
+
+                          'StreamingTV', 
+
+                          'StreamingMovies', 
+
+                          'PaperlessBilling', 
+
+                          'Tenure', 
+
+                          'MonthlyCharge', 
+
+                          'Bandwidth_GB_Year', 
+
+                          'Timely_Response', 
+
+                          'Timely_Fixes', 
+
+                          'Timely_Replacements', 
+
+                          'Reliability', 
+
+                          'Options', 
+
+                          'Respectful_Response', 
+
+                          'Courteous_Exchange', 
+
+                          'Active_Listening', 
+
+                          'Area_Rural', 
+
+                          'Area_Suburban', 
+
+                          'Area_Urban', 
+
+                          'Contract_Month_To_Month', 
+
+                          'Contract_OneYear', 
+
+                          'Contract_TwoYear', 
+
+                          'Gender_Female', 
+
+                          'Gender_Male', 
+
+                          'Gender_Nonbinary', 
+
+                          'InternetService_DSL', 
+
+                          'InternetService_FiberOptic', 
+
+                          'InternetService_None')] 
+
+  
+
+X_Test <- Test_data[, c('Children', 
+
+                        'Age', 
+
+                        'Income', 
+
+                        'Outage_sec_perweek', 
+
+                        'Email', 
+
+                        'Contacts', 
+
+                        'Yearly_equip_failure', 
+
+                        'Techie', 
+
+                        'Port_modem', 
+
+                        'Tablet', 
+
+                        'Phone', 
+
+                        'Multiple', 
+
+                        'OnlineSecurity', 
+
+                        'OnlineBackup', 
+
+                        'DeviceProtection', 
+
+                        'TechSupport', 
+
+                        'StreamingTV', 
+
+                        'StreamingMovies', 
+
+                        'PaperlessBilling', 
+
+                        'Tenure', 
+
+                        'MonthlyCharge', 
+
+                        'Bandwidth_GB_Year', 
+
+                        'Timely_Response', 
+
+                        'Timely_Fixes', 
+
+                        'Timely_Replacements', 
+
+                        'Reliability', 
+
+                        'Options', 
+
+                        'Respectful_Response', 
+
+                        'Courteous_Exchange', 
+
+                        'Active_Listening', 
+
+                        'Area_Rural', 
+
+                        'Area_Suburban', 
+
+                        'Area_Urban', 
+
+                        'Contract_Month_To_Month', 
+
+                        'Contract_OneYear', 
+
+                        'Contract_TwoYear', 
+
+                        'Gender_Female', 
+
+                        'Gender_Male', 
+
+                        'Gender_Nonbinary', 
+
+                        'InternetService_DSL', 
+
+                        'InternetService_FiberOptic', 
+
+                        'InternetService_None')] 
+
+  
+
+#Create train and test sets 
+
+Y_train <- Train_data$Churn 
+
+Y_test <- Test_data$Churn 
+
+  
+
+#Export Training and Test Data 
+
+write.csv(X_Train, "C:/Users/ntrei/OneDrive/Documents/MSDA/XTrain209.csv") 
+
+write.csv(X_Test, "C:/Users/ntrei/OneDrive/Documents/MSDA/XTest209.csv") 
+
+write.csv(Y_train, "C:/Users/ntrei/OneDrive/Documents/MSDA/YTrain209.csv") 
+
+write.csv(Y_test, "C:/Users/ntrei/OneDrive/Documents/MSDA/YTest209.csv") 
+
+  
+
+#Check dimensions of the split 
+
+prop.table(table(Train_data$Churn)) * 100 
+
+prop.table(table(Test_data$Churn)) * 100 
+
+  
+
+#Feature scaling 
+
+Train_data[-43] = scale(Train_data[-43]) 
+
+Test_data[-43] = scale(Test_data[-43]) 
+
+  
+
+####Fit Naive Bayes on Training data 
+
+#library(naivebayes) 
+
+#NBmodel <- naive_bayes(Churn ~ ., data = Train_data) 
+
+library(e1071) 
+
+Classifier = naiveBayes(x = Train_data[-43], y = Train_data$Churn) 
+
+Classifier 
+
+  
+
+##Make a prediction 
+
+#Pred <- predict(NBmodel, ) 
+
+Y_predict = predict(Classifier, newdata = Test_data[-43]) 
+
+Y_predict 
+
+  
+
+#Evaluate accuracy of the model  
+
+table(Y_predict, Test_data$Churn) 
+
+  
+
+#Confusion Matrix 
+
+CM = table(Test_data[, 43], Y_predict) 
+
+  
+
+#Visualization 
+
+plot(Y_predict) 
+
+plot(CM) 
+
+  
+
+#Define object to plot 
+
+class(Y_predict) 
+
+rocobj <- roc(Test_data$Churn, as.ordered(Y_predict)) 
+
+rocobj 
+
+  
+
+#Create ROC plot 
+
+plot(rocobj, main="ROC curve") 
+
+  
+
+#Define object to plot and calculate AUC 
+
+auc <- round(auc(Test_data$Churn, as.ordered(Y_predict)),4) 
+
+print(auc) 
+
+  
+
+#Creat ROC plot with AUC 
+
+plot(rocobj, main="ROC curve") 
+
+text(0.8, 0.2, paste("AUC =", auc)) 
+
+  
+
+ 
